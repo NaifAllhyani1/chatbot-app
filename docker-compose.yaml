@@ -1,0 +1,31 @@
+services:
+  chromadb:
+    image: chromadb/chroma
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - chromadb_data:/chroma/chroma
+
+  backend:
+    image: ${DOCKERHUB_NAMESPACE}/chatbot-backend:latest
+    restart: unless-stopped
+    environment:
+      KEY_VAULT_NAME: ${KEY_VAULT_NAME}
+    ports:
+      - "5000:5000"
+    depends_on:
+      - chromadb
+
+  chatbot:
+    image: ${DOCKERHUB_NAMESPACE}/chatbot-frontend:latest
+    restart: unless-stopped
+    environment:
+      BACKEND_URL: http://backend:5000
+    ports:
+      - "8501:8501"
+    depends_on:
+      - backend
+
+volumes:
+  chromadb_data:

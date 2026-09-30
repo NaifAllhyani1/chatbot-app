@@ -340,4 +340,5 @@ async def rag_chat(request: RAGChatRequest):
         for chunk in stream:
             yield chunk
 
+ 
     return StreamingResponse(stream_response(), media_type="text/plain")
